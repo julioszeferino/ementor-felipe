@@ -6,6 +6,7 @@ on:
       - main
 
 permissions:
+  id-token: write
   contents: read
   pull-requests: read
 
@@ -53,6 +54,8 @@ jobs:
 
   terraform-checks:
     runs-on: ubuntu-latest
+    env:
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,8 +78,21 @@ jobs:
       - name: Terraform fmt/validate
         run: make test-tac
 
+      - name: Configure AWS credentials (OIDC)
+        if: ${{ env.AWS_ROLE_TO_ASSUME != '' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
+          aws-region: us-east-1
+
       - name: Terraform plan (syntax and graph check)
+        if: ${{ env.AWS_ROLE_TO_ASSUME != '' }}
         run: make terraform-plan-ci
+
+      - name: Skip terraform plan notice
+        if: ${{ env.AWS_ROLE_TO_ASSUME == '' }}
+        run: |
+          echo "Terraform plan skipped in PR validation because AWS_ROLE_TO_ASSUME is not configured."
 
   sonarqube:
     runs-on: ubuntu-latest
