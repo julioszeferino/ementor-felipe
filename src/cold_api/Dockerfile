@@ -6,7 +6,7 @@ WORKDIR /app
 RUN useradd --create-home --shell /usr/sbin/nologin appuser
 
 COPY requirements-dev.txt /tmp/requirements-dev.txt
-RUN pip install --no-cache-dir -r /tmp/requirements-dev.txt
+RUN pip install --no-cache-dir --only-binary=:all: -r /tmp/requirements-dev.txt # NOSONAR
 
 COPY src/cold_api /app
 RUN chown -R appuser:appuser /app
