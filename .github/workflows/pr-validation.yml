@@ -79,24 +79,24 @@ jobs:
         run: make test-tac
 
       - name: Configure AWS credentials (OIDC)
-        if: ${{ env.AWS_ROLE_TO_ASSUME != '' }}
+        if: ${{ startsWith(env.AWS_ROLE_TO_ASSUME, 'arn:aws:iam::') }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ env.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
 
       - name: Terraform plan (syntax and graph check)
-        if: ${{ env.AWS_ROLE_TO_ASSUME != '' }}
+        if: ${{ startsWith(env.AWS_ROLE_TO_ASSUME, 'arn:aws:iam::') }}
         run: make terraform-plan-ci
 
       - name: Skip terraform plan notice
-        if: ${{ env.AWS_ROLE_TO_ASSUME == '' }}
+        if: ${{ !startsWith(env.AWS_ROLE_TO_ASSUME, 'arn:aws:iam::') }}
         run: |
-          echo "Terraform plan skipped in PR validation because AWS_ROLE_TO_ASSUME is not configured."
+          echo "Terraform plan skipped in PR validation because AWS_ROLE_TO_ASSUME is missing or not an IAM Role ARN."
 
   sonarqube:
     runs-on: ubuntu-latest
-    needs: [quality-and-security, terraform-checks]
+    needs: [quality-and-security]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
