@@ -63,7 +63,12 @@ jobs:
         run: |
           terraform -chdir=terraform init
           terraform -chdir=terraform apply -auto-approve \
-            -var-file=terraform.production.tfvars
+            -var="project_name=data-platform" \
+            -var="environment=production" \
+            -var="aws_region=us-east-1" \
+            -var="raw_bucket_name=data-platform-production-raw" \
+            -var="loc_bucket_name=data-platform-production-loc" \
+            -var="silver_bucket_name=data-platform-production-silver"
 
       - name: Skip deploy notice
         if: ${{ !(vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '') }}
