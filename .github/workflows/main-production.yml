@@ -51,22 +51,28 @@ jobs:
       - name: Terraform validate
         run: make terraform-validate
 
-      - name: Configure AWS credentials (OIDC)
-        if: ${{ vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '' }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          aws-region: us-east-1
+      # Deploy em AWS temporariamente desativado.
+      # Descomente os passos abaixo quando a equipe decidir habilitar implementacao em nuvem.
+      # - name: Configure AWS credentials (OIDC)
+      #   if: ${{ vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '' }}
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+      #     aws-region: us-east-1
 
-      - name: Terraform apply (production)
-        if: ${{ vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '' }}
-        run: |
-          terraform -chdir=terraform init
-          terraform -chdir=terraform apply -auto-approve \
-            -var-file=terraform.production.tfvars
+      # - name: Terraform apply (production)
+      #   if: ${{ vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '' }}
+      #   run: |
+      #     terraform -chdir=terraform init
+      #     terraform -chdir=terraform apply -auto-approve \
+      #       -var="project_name=data-platform" \
+      #       -var="environment=production" \
+      #       -var="aws_region=us-east-1" \
+      #       -var="raw_bucket_name=data-platform-production-raw" \
+      #       -var="loc_bucket_name=data-platform-production-loc" \
+      #       -var="silver_bucket_name=data-platform-production-silver"
 
       - name: Skip deploy notice
-        if: ${{ !(vars.ENABLE_TF_APPLY == 'true' && secrets.AWS_ROLE_TO_ASSUME != '') }}
         run: |
-          echo "Deployment skipped."
-          echo "Set repository variable ENABLE_TF_APPLY=true and secret AWS_ROLE_TO_ASSUME to enable production apply."
+          echo "Deployment skipped by policy."
+          echo "AWS apply steps are commented in .github/workflows/main-production.yml."
