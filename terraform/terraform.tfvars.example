@@ -1,0 +1,6 @@
+project_name       = "data-platform"
+environment        = "production"
+aws_region         = "us-east-1"
+raw_bucket_name    = "data-platform-production-raw"
+loc_bucket_name    = "data-platform-production-loc"
+silver_bucket_name = "data-platform-production-silver"

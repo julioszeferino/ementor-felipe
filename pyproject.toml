@@ -1,0 +1,22 @@
+[project]
+name = "aws-batch-streaming-skeleton"
+version = "0.1.0"
+description = "Project skeleton for AWS cold + hot data platform"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --cov=src --cov-report=term-missing --cov-report=xml --cov-fail-under=90"
+testpaths = ["tests"]
+pythonpath = ["src"]
+markers = [
+  "unit: unit tests",
+  "integration: integration tests",
+  "tac: infrastructure/tests-as-code checks",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
