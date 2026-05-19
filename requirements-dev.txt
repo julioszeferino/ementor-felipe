@@ -5,5 +5,5 @@ httpx==0.28.1
 pytest==8.4.1
 pytest-cov==6.2.1
 ruff==0.12.5
-bandit==1.7.9
+bandit==1.9.4
 pip-audit==2.9.0
